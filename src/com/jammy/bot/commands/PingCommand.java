@@ -1,11 +1,10 @@
 package com.jammy.bot.commands;
 
-import com.jammy.bot.Bot;
 import com.jammy.bot.database.Database;
 import com.jammy.utils.FormatCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class PongCommand extends JammyCommand
+public class PingCommand extends JammyCommand
 {
 
     @Override

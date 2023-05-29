@@ -1,7 +1,7 @@
 package com.jammy.bot;
 
 import com.jammy.bot.commands.CommandLoader;
-import com.jammy.bot.commands.PongCommand;
+import com.jammy.bot.commands.PingCommand;
 import com.jammy.bot.database.Database;
 import com.jammy.bot.events.JoinGuildListener;
 import com.jammy.bot.events.QuitGuildListener;
@@ -77,7 +77,7 @@ public class Bot extends ListenerAdapter
     {
         switch (event.getName()) {
             case "ping":
-                new PongCommand().execute(Bot.database,  event);
+                new PingCommand().execute(Bot.database,  event);
         }
     }
 }
