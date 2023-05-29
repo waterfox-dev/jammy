@@ -11,7 +11,8 @@ public class Main
         try
         {
             assert token != null;
-            Bot jammy = new Bot(token.getProperty("token"));
+            Bot jammy = new Bot();
+            jammy.loadBot(token.getProperty("token"));
         }
         catch (AssertionError e)
         {

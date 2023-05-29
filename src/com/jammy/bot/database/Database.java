@@ -2,6 +2,7 @@ package com.jammy.bot.database;
 
 import com.jammy.utils.PropertiesReader;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -85,6 +86,36 @@ public class Database
             preparedStatement.execute();
 
         }
+        catch (SQLException e)
+        {
+            System.out.println(e);
+            //TODO : call the stop procedure
+        }
+    }
+
+    public void addCommand(SlashCommandInteractionEvent event, String content)
+    {
+        try
+        {
+            java.util.Date date = new java.util.Date();
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            long guildId = 0;
+
+            if(event.getGuild() != null)
+            {
+                guildId = event.getGuild().getIdLong();
+            }
+
+            String query = "INSERT INTO jam_command(com_content, gui_id, com_author, com_date)" +  " VALUES(?,?,?,?)";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setString(1,content);
+            preparedStatement.setLong(2, guildId);
+            preparedStatement.setLong(3, event.getUser().getIdLong());
+            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.execute();
+        }
+
         catch (SQLException e)
         {
             System.out.println(e);
