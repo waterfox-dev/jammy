@@ -1,6 +1,10 @@
 package com.jammy.bot;
 
+import com.jammy.bot.database.Database;
+import com.jammy.bot.events.JoinGuildListener;
+import com.jammy.bot.events.QuitGuildListener;
 import com.jammy.bot.events.ReadyListener;
+import com.jammy.bot.events.StopListener;
 import com.jammy.utils.PropertiesReader;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -14,6 +18,7 @@ public class Bot
     private final Properties channelProperties;
 
     public final JDABuilder jdaBuilder;
+    public final Database database;
 
     public long logGuild;
     public long logChannel;
@@ -29,7 +34,7 @@ public class Bot
 
         this.channelProperties = PropertiesReader.getProperties("assets/config/channel.properties");
 
-
+        this.database = new Database();
 
         try
         {
@@ -48,7 +53,11 @@ public class Bot
         try
         {
             this.jda = jdaBuilder.build().awaitReady();
+
             this.jdaBuilder.addEventListeners(new ReadyListener(this));
+            this.jdaBuilder.addEventListeners(new StopListener(this));
+            this.jdaBuilder.addEventListeners(new JoinGuildListener(this));
+            this.jdaBuilder.addEventListeners(new QuitGuildListener(this));
 
             this.jda = this.jdaBuilder.build();
         }

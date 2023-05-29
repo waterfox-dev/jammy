@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="net.dv8tion.JDA" level="project" />
     <orderEntry type="library" name="jboss.slf4j.logging" level="project" />
+    <orderEntry type="library" name="mysql.connector.j" level="project" />
   </component>
 </module>

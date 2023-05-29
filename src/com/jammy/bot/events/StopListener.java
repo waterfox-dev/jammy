@@ -6,12 +6,13 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.jetbrains.annotations.NotNull;
+import net.dv8tion.jda.api.hooks.EventListener;
 
-public class ReadyListener extends JammyListener
-{
-    public ReadyListener(Bot bot)
+public class StopListener extends JammyListener {
+
+    public StopListener(Bot bot)
     {
         super(bot);
     }
@@ -19,13 +20,13 @@ public class ReadyListener extends JammyListener
     @Override
     public void onEvent(@NotNull GenericEvent genericEvent)
     {
-        if(genericEvent instanceof ReadyEvent)
+        if(genericEvent instanceof ShutdownEvent)
         {
             try
             {
                 TextChannel logChannel = this.logGuild.getTextChannelById(this.bot.logChannel);
                 assert logChannel != null;
-                logChannel.sendMessage(DiscordLogger.log("Jammy is ready !", this.bot.database)).queue();
+                logChannel.sendMessage(DiscordLogger.log("Jammy is stopping !", this.bot.database)).queue();
             }
             catch (AssertionError e)
             {

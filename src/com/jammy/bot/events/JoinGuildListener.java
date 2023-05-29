@@ -2,30 +2,29 @@ package com.jammy.bot.events;
 
 import com.jammy.bot.Bot;
 import com.jammy.utils.DiscordLogger;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.hooks.EventListener;
-import org.jetbrains.annotations.NotNull;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 
-public class ReadyListener extends JammyListener
+public class JoinGuildListener extends JammyListener
 {
-    public ReadyListener(Bot bot)
+
+    public JoinGuildListener(Bot bot)
     {
         super(bot);
     }
 
     @Override
-    public void onEvent(@NotNull GenericEvent genericEvent)
+    public void onEvent(GenericEvent genericEvent)
     {
-        if(genericEvent instanceof ReadyEvent)
+        if(genericEvent instanceof GuildJoinEvent)
         {
             try
             {
+                bot.database.addGuild(((GuildJoinEvent) genericEvent).getGuild());
                 TextChannel logChannel = this.logGuild.getTextChannelById(this.bot.logChannel);
                 assert logChannel != null;
-                logChannel.sendMessage(DiscordLogger.log("Jammy is ready !", this.bot.database)).queue();
+                logChannel.sendMessage(DiscordLogger.log("Jammy join the guild " + ((GuildJoinEvent) genericEvent).getGuild().getName(), this.bot.database)).queue();
             }
             catch (AssertionError e)
             {
