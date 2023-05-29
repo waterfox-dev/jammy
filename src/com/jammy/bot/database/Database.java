@@ -39,11 +39,11 @@ public class Database
     {
         try
         {
-            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
             String query = "INSERT INTO jam_log(log_date, log_message)" + "VALUES (?,?)";
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setDate(1, sqlDate);
+            preparedStatement.setTimestamp(1, sqlDate);
             preparedStatement.setString(2, message);
             preparedStatement.execute();
         }
@@ -59,14 +59,14 @@ public class Database
         try
         {
             java.util.Date date = new java.util.Date();
-            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
             String query = "INSERT INTO jam_guild(gui_id, gui_name, gui_owner, gui_date)" + "VALUES(?,?,?,?)";
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setLong(1, guild.getIdLong());
             preparedStatement.setString(2, guild.getName());
             preparedStatement.setLong(3, guild.getOwnerIdLong());
-            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setTimestamp(4, sqlDate);
             preparedStatement.execute();
         }
         catch (SQLException e)
@@ -98,7 +98,7 @@ public class Database
         try
         {
             java.util.Date date = new java.util.Date();
-            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
             long guildId = 0;
 
@@ -112,7 +112,7 @@ public class Database
             preparedStatement.setString(1,content);
             preparedStatement.setLong(2, guildId);
             preparedStatement.setLong(3, event.getUser().getIdLong());
-            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setTimestamp(4, sqlDate);
             preparedStatement.execute();
         }
 
