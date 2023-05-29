@@ -2,6 +2,7 @@ package com.jammy.bot.database;
 
 import com.jammy.utils.PropertiesReader;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.*;
@@ -122,4 +123,6 @@ public class Database
             //TODO : call the stop procedure
         }
     }
+
+
 }

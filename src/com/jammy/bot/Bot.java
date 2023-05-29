@@ -11,40 +11,47 @@ import com.jammy.utils.PropertiesReader;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.Properties;
 
 public class Bot extends ListenerAdapter
 {
-    private String token;
-    private Properties channelProperties;
+
+    private static String token;
+    private static Properties channelProperties;
+    private static Properties botProperties;
 
     public static Database database = new Database();
+    public static JDA jda;
 
-    public JDABuilder jdaBuilder;
+    public static JDABuilder jdaBuilder;
 
-    public long logGuild;
-    public long logChannel;
-    public long exceptionChannel;
-    public JDA jda;
+    public static long logGuild;
+    public static long logChannel;
+    public static long exceptionChannel;
 
 
     public void loadBot(String token)
     {
-        this.token = token;
-        this.jdaBuilder = JDABuilder.createDefault(this.token);
-        this.jdaBuilder.setActivity(Activity.listening("Boogie Body - Rock The Factory"));
+        Bot.token = token;
+        Bot.jdaBuilder = JDABuilder.createDefault(Bot.token, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES);
+        Bot.jdaBuilder.setActivity(Activity.listening("Boogie Body - Rock The Factory"));
 
-        this.channelProperties = PropertiesReader.getProperties("assets/config/channel.properties");
+        Bot.channelProperties = PropertiesReader.getProperties("assets/config/channel.properties");
+        Bot.botProperties = PropertiesReader.getProperties("assets/config/bot.properties");
+
         try
         {
-            assert this.channelProperties != null;
+            assert Bot.channelProperties != null;
 
-            this.logGuild = Long.parseLong(this.channelProperties.getProperty("logGuild"));
-            this.logChannel = Long.parseLong(this.channelProperties.getProperty("logChannel"));
-            this.exceptionChannel = Long.parseLong(this.channelProperties.getProperty("exceptionChannel"));
+            Bot.logGuild = Long.parseLong(Bot.channelProperties.getProperty("logGuild"));
+            Bot.logChannel = Long.parseLong(Bot.channelProperties.getProperty("logChannel"));
+            Bot.exceptionChannel = Long.parseLong(Bot.channelProperties.getProperty("exceptionChannel"));
 
         }
         catch (AssertionError e)
@@ -54,16 +61,16 @@ public class Bot extends ListenerAdapter
 
         try
         {
-            this.jda = jdaBuilder.build().awaitReady();
+            Bot.jda = jdaBuilder.build().awaitReady();
 
-            this.jdaBuilder.addEventListeners(new ReadyListener(this));
-            this.jdaBuilder.addEventListeners(new StopListener(this));
-            this.jdaBuilder.addEventListeners(new JoinGuildListener(this));
-            this.jdaBuilder.addEventListeners(new QuitGuildListener(this));
-            this.jdaBuilder.addEventListeners(new Bot());
+            Bot.jdaBuilder.addEventListeners(new ReadyListener(this));
+            Bot.jdaBuilder.addEventListeners(new StopListener(this));
+            Bot.jdaBuilder.addEventListeners(new JoinGuildListener(this));
+            Bot.jdaBuilder.addEventListeners(new QuitGuildListener(this));
+            Bot.jdaBuilder.addEventListeners(new Bot());
 
-            this.jda = this.jdaBuilder.build();
-            CommandLoader.load(this.jda);
+            Bot.jda = Bot.jdaBuilder.build();
+            CommandLoader.load(Bot.jda);
 
         }
         catch (InterruptedException e)
@@ -78,6 +85,19 @@ public class Bot extends ListenerAdapter
         switch (event.getName()) {
             case "ping":
                 new PingCommand().execute(Bot.database,  event);
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event)
+    {
+        if(event.getAuthor().getIdLong() == Long.parseLong(botProperties.getProperty("ownerId")))
+        {
+            System.out.println(event.getMessage().getContentRaw());
+            if(event.getMessage().getContentRaw().equals("//stop"))
+            {
+                Bot.jda.shutdown();
+            }
         }
     }
 }

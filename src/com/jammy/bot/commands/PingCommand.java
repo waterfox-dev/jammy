@@ -8,10 +8,10 @@ public class PingCommand extends JammyCommand
 {
 
     @Override
-    public void execute(Database database, SlashCommandInteractionEvent event)
+    public void execute(Database db, SlashCommandInteractionEvent event)
     {
-        System.out.println(database);
-        this.insertCommand(database, event, FormatCommand.formatCommand(event));
+        System.out.println(db);
+        this.insertCommand(db, event, FormatCommand.formatCommand(event));
         long time = System.currentTimeMillis();
         event.reply("Pong!").setEphemeral(true).flatMap(v ->
             event.getHook().editOriginalFormat("Pong: %d ms", System.currentTimeMillis() - time)
