@@ -20,7 +20,7 @@ public class Database
     {
         try
         {
-            properties = PropertiesReader.getProperties("assets/config/database.properties");
+            this.properties = PropertiesReader.getProperties("assets/config/database.properties");
             assert properties != null;
 
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -38,6 +38,7 @@ public class Database
 
     public void insertLog(java.util.Date date, String message)
     {
+        reload();
         try
         {
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
@@ -57,6 +58,7 @@ public class Database
 
     public void addGuild(Guild guild)
     {
+        reload();
         try
         {
             java.util.Date date = new java.util.Date();
@@ -79,6 +81,7 @@ public class Database
 
     public void removeGuild(Guild guild)
     {
+        reload();
         try
         {
             String query = "DELETE FROM jam_guild WHERE gui_id = " + "?";
@@ -96,6 +99,7 @@ public class Database
 
     public void addCommand(SlashCommandInteractionEvent event, String content)
     {
+        reload();
         try
         {
             java.util.Date date = new java.util.Date();
@@ -124,5 +128,42 @@ public class Database
         }
     }
 
+    public boolean addCitationChannel(long guildId, long channelId)
+    {
+        reload();
+        try
+        {
+            java.util.Date date = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
+            String query = "INSERT INTO jam_citation_channel(citchan_id, gui_id, citchan_date)" + "VALUES(?,?,?)";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setLong(1, channelId);
+            preparedStatement.setLong(2, guildId);
+            preparedStatement.setTimestamp(3, sqlDate);
+            preparedStatement.execute();
+            return true;
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e);
+            return false;
+            //TODO : call the stop procedure
+        }
+    }
+
+    private void reload()
+    {
+        try
+        {
+            this.connection = DriverManager.getConnection(
+                    properties.getProperty("host"), properties.getProperty("user"), properties.getProperty("password")
+            );
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e);
+            //todo : Call the stop procedure
+        }
+    }
 }

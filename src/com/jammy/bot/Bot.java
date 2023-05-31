@@ -2,6 +2,7 @@ package com.jammy.bot;
 
 import com.jammy.bot.commands.CommandLoader;
 import com.jammy.bot.commands.PingCommand;
+import com.jammy.bot.commands.SetCitationCommand;
 import com.jammy.bot.database.Database;
 import com.jammy.bot.events.JoinGuildListener;
 import com.jammy.bot.events.QuitGuildListener;
@@ -39,7 +40,12 @@ public class Bot extends ListenerAdapter
     public void loadBot(String token)
     {
         Bot.token = token;
-        Bot.jdaBuilder = JDABuilder.createDefault(Bot.token, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES);
+        Bot.jdaBuilder = JDABuilder.createDefault(Bot.token,
+                GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.DIRECT_MESSAGE_TYPING,
+                GatewayIntent.GUILD_MESSAGE_TYPING);
         Bot.jdaBuilder.setActivity(Activity.listening("Boogie Body - Rock The Factory"));
 
         Bot.channelProperties = PropertiesReader.getProperties("assets/config/channel.properties");
@@ -85,6 +91,10 @@ public class Bot extends ListenerAdapter
         switch (event.getName()) {
             case "ping":
                 new PingCommand().execute(Bot.database,  event);
+                break;
+            case "setcitation":
+                new SetCitationCommand().execute(Bot.database, event);
+                break;
         }
     }
 
@@ -97,6 +107,7 @@ public class Bot extends ListenerAdapter
             if(event.getMessage().getContentRaw().equals("//stop"))
             {
                 Bot.jda.shutdown();
+                System.exit(1);
             }
         }
     }
