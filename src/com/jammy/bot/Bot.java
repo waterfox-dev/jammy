@@ -1,5 +1,6 @@
 package com.jammy.bot;
 
+import com.jammy.bot.commands.CiteCommand;
 import com.jammy.bot.commands.CommandLoader;
 import com.jammy.bot.commands.PingCommand;
 import com.jammy.bot.commands.SetCitationCommand;
@@ -45,7 +46,8 @@ public class Bot extends ListenerAdapter
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.DIRECT_MESSAGE_TYPING,
-                GatewayIntent.GUILD_MESSAGE_TYPING);
+                GatewayIntent.GUILD_MESSAGE_TYPING,
+                GatewayIntent.GUILD_MEMBERS);
         Bot.jdaBuilder.setActivity(Activity.listening("Boogie Body - Rock The Factory"));
 
         Bot.channelProperties = PropertiesReader.getProperties("assets/config/channel.properties");
@@ -89,12 +91,9 @@ public class Bot extends ListenerAdapter
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
     {
         switch (event.getName()) {
-            case "ping":
-                new PingCommand().execute(Bot.database,  event);
-                break;
-            case "setcitation":
-                new SetCitationCommand().execute(Bot.database, event);
-                break;
+            case "ping" -> new PingCommand().execute(Bot.database, event);
+            case "setcitation" -> new SetCitationCommand().execute(Bot.database, event);
+            case "cite" -> new CiteCommand().execute(Bot.database, event);
         }
     }
 

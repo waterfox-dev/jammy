@@ -152,6 +152,59 @@ public class Database
         }
     }
 
+    public boolean addCite(SlashCommandInteractionEvent event)
+    {
+        reload();
+        try
+        {
+            java.util.Date date = new java.util.Date();
+            java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
+
+            String query = "INSERT INTO jam_citation(chan_id, cit_author, cit_content, cit_submit_id, cit_date)" +
+                    "VALUES((SELECT citchan_id FROM jam_citation_channel WHERE gui_id = ?), ?, ?, ?, ?);";
+
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setLong(1, event.getGuild().getIdLong());
+            preparedStatement.setLong(2, event.getOption("author").getAsLong());
+            preparedStatement.setString(3, event.getOption("content").getAsString());
+            preparedStatement.setLong(4, event.getOption("reporter").getAsLong());
+            preparedStatement.setTimestamp(5, sqlDate);
+            System.out.println(preparedStatement.toString());
+            preparedStatement.execute();
+            return true;
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e);
+            return false;
+            //TODO : call the stop procedure
+        }
+    }
+
+    public long getCitationChannel(SlashCommandInteractionEvent event)
+    {
+        reload();
+        try
+        {
+            String query = "SELECT citchan_id FROM jam_citation_channel WHERE gui_id = ?";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setLong(1, event.getGuild().getIdLong());
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next())
+            {
+                return rs.getLong("citchan_id");
+            }
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e);
+            return -1;
+            //TODO : call the stop procedure
+        }
+        return -1;
+
+    }
+
     private void reload()
     {
         try

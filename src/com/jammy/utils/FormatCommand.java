@@ -12,7 +12,7 @@ public class FormatCommand
         sb.append(event.getName()).append(" - ");
         for(OptionMapping e : event.getOptions())
         {
-            sb.append(e.getName()).append(";");
+            sb.append(e.getAsString()).append(";");
         }
         return sb.toString();
     }
