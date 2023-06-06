@@ -1,5 +1,6 @@
 package com.jammy.bot.database;
 
+import com.jammy.bot.structures.Citation;
 import com.jammy.utils.PropertiesReader;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.Event;
@@ -9,6 +10,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Database
@@ -136,7 +138,7 @@ public class Database
             java.util.Date date = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
-            String query = "INSERT INTO jam_citation_channel(citchan_id, gui_id, citchan_date)" + "VALUES(?,?,?)";
+            String query = "INSERT INTO jam_citation_channel(chan_id, gui_id, citchan_date)" + "VALUES(?,?,?)";
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setLong(1, channelId);
             preparedStatement.setLong(2, guildId);
@@ -161,7 +163,7 @@ public class Database
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
 
             String query = "INSERT INTO jam_citation(chan_id, cit_author, cit_content, cit_submit_id, cit_date)" +
-                    "VALUES((SELECT citchan_id FROM jam_citation_channel WHERE gui_id = ?), ?, ?, ?, ?);";
+                    "VALUES((SELECT chan_id FROM jam_citation_channel WHERE gui_id = ?), ?, ?, ?, ?);";
 
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setLong(1, event.getGuild().getIdLong());
@@ -186,13 +188,13 @@ public class Database
         reload();
         try
         {
-            String query = "SELECT citchan_id FROM jam_citation_channel WHERE gui_id = ?";
+            String query = "SELECT chan_id FROM jam_citation_channel WHERE gui_id = ?";
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setLong(1, event.getGuild().getIdLong());
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next())
             {
-                return rs.getLong("citchan_id");
+                return rs.getLong("chan_id");
             }
         }
         catch(SQLException e)
@@ -202,7 +204,46 @@ public class Database
             //TODO : call the stop procedure
         }
         return -1;
+    }
 
+    public ArrayList<Citation> getCitation(long guild_id)
+    {
+        reload();
+        try
+        {
+            String query = "SELECT * FROM jam_citation " +
+                    "WHERE chan_id IN " +
+                    "( " +
+                    "    SELECT chan_id FROM jam_citation_channel WHERE gui_id = ?" +
+                    ")";
+
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setLong(1, guild_id);
+
+            ArrayList<Citation> citations = new ArrayList<>();
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next())
+            {
+                citations.add(new Citation(
+                        rs.getInt("cit_id"),
+                        rs.getLong("chan_id"),
+                        rs.getLong("cit_author"),
+                        rs.getString("cit_content"),
+                        rs.getLong("cit_submit_id"),
+                        rs.getTimestamp("cit_date")
+                ));
+            }
+
+            return citations;
+        }
+        catch (SQLException e)
+        {
+            System.out.println(e);
+            //todo : Call the stop procedure
+            return null;
+
+        }
     }
 
     private void reload()

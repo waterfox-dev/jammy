@@ -1,9 +1,6 @@
 package com.jammy.bot;
 
-import com.jammy.bot.commands.CiteCommand;
-import com.jammy.bot.commands.CommandLoader;
-import com.jammy.bot.commands.PingCommand;
-import com.jammy.bot.commands.SetCitationCommand;
+import com.jammy.bot.commands.*;
 import com.jammy.bot.database.Database;
 import com.jammy.bot.events.JoinGuildListener;
 import com.jammy.bot.events.QuitGuildListener;
@@ -94,6 +91,7 @@ public class Bot extends ListenerAdapter
             case "ping" -> new PingCommand().execute(Bot.database, event);
             case "setcitation" -> new SetCitationCommand().execute(Bot.database, event);
             case "cite" -> new CiteCommand().execute(Bot.database, event);
+            case "formatcitation" -> new FormatCitationCommand().execute(Bot.database, event);
         }
     }
 

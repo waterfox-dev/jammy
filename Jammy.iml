@@ -10,5 +10,6 @@
     <orderEntry type="library" name="net.dv8tion.JDA" level="project" />
     <orderEntry type="library" name="jboss.slf4j.logging" level="project" />
     <orderEntry type="library" name="mysql.connector.j" level="project" />
+    <orderEntry type="library" name="Markdown2Pdf-1.0.2" level="project" />
   </component>
 </module>

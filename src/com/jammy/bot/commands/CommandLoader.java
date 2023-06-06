@@ -22,7 +22,9 @@ public class CommandLoader
                     .setGuildOnly(true)
                     .addOption(OptionType.USER, "author", "The author of the citation")
                     .addOption(OptionType.STRING, "content", "The content of the citation")
-                    .addOption(OptionType.USER, "reporter", "The reporter of the citation")
+                    .addOption(OptionType.USER, "reporter", "The reporter of the citation"),
+            Commands.slash("formatcitation", "Format all citations into a file")
+                    .setGuildOnly(true)
 
     );
 
