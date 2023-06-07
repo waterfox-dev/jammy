@@ -9,10 +9,10 @@ public class FormatCommand
     public static String formatCommand(SlashCommandInteractionEvent event)
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(event.getName()).append(" - ");
+        sb.append(event.getName()).append("-");
         for(OptionMapping e : event.getOptions())
         {
-            sb.append(e.getAsString()).append(";");
+            sb.append(e.getAsString()).append("|");
         }
         return sb.toString();
     }

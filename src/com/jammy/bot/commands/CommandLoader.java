@@ -31,6 +31,16 @@ public class CommandLoader
 
     public static void load(JDA jda)
     {
-        //No command to add.
+        jda.updateCommands().addCommands(            Commands.slash("ping", "Calculate ping of the bot"),
+                Commands.slash("setcitation", "Define the citation channel for the bot")
+                        .setGuildOnly(true)
+                        .addOption(OptionType.CHANNEL, "channel", "The citation channel"),
+                Commands.slash("cite", "Add a citation to citation channel")
+                        .setGuildOnly(true)
+                        .addOption(OptionType.USER, "author", "The author of the citation")
+                        .addOption(OptionType.STRING, "content", "The content of the citation")
+                        .addOption(OptionType.USER, "reporter", "The reporter of the citation"),
+                Commands.slash("formatcitation", "Format all citations into a file")
+                        .setGuildOnly(true)).queue();
     }
 }

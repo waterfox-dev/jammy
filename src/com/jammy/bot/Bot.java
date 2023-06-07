@@ -15,7 +15,13 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.FileUpload;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Bot extends ListenerAdapter
@@ -105,6 +111,24 @@ public class Bot extends ListenerAdapter
             {
                 Bot.jda.shutdown();
                 System.exit(1);
+            }
+            if(event.getMessage().getContentRaw().startsWith("//sql"))
+            {
+                String query = event.getMessage().getContentRaw().split("//sql ")[1];
+                String datas = Bot.database.executeSpecific(query);
+                Path path = Paths.get("assets/csv/response.csv");
+                try
+                {
+                    Files.writeString(path, datas);
+                    FileUpload fileUpload = FileUpload.fromData(path.toFile());
+                    event.getChannel().sendFiles(fileUpload).queue();
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                    //TODO : call the stop procedure
+                }
+
             }
         }
     }

@@ -31,3 +31,7 @@ bin/
 
 ### Security File ###
 /assets/config/
+
+### Assets ###
+/assets/csv/
+/assets/markdown/

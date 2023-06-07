@@ -246,6 +246,34 @@ public class Database
         }
     }
 
+    public String executeSpecific(String query)
+    {
+        reload();
+        try
+        {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            StringBuilder stringBuilder  = new StringBuilder();
+
+            while(resultSet.next())
+            {
+                for(int i = 1; i < rsmd.getColumnCount(); i++)
+                {
+                    stringBuilder.append(resultSet.getString(i)).append(";");
+                }
+                stringBuilder.append("\n");
+            }
+            return stringBuilder.toString();
+        }
+        catch (SQLException e )
+        {
+            System.out.println(e);
+            //todo : Call the stop procedure
+            return null;
+        }
+    }
+
     private void reload()
     {
         try
